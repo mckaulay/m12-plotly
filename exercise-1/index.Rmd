@@ -1,0 +1,60 @@
+---
+title: "index"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = FALSE)
+```
+
+
+```{r echo=FALSE}
+library(plotly)
+```
+
+
+```{r echo=FALSE}
+# - As in previous exercises, you should fork and clone this repository.
+# - Create an new R Markdown (`.Rmd`) file in this project called `index.Rmd` (so that we can easily create a website)
+# - Using the available documentation, create an [choropleth map](https://plot.ly/r/choropleth-maps/) using Plotly (in a **code block**)
+# - Write a short paragraph, and then show your plot in your Markdown file
+# - Knit your HTML file
+# - Add and commit your changes to Git (on your terminal)
+# - Create a `gh-pages` branch of your work
+# - Push your `gh-pages` branch up to GitHub
+# - View your new interactive website at `YOUR-USERNAME.github.io/m12-plotly/exercise-1`
+
+data("USArrests")
+
+df <- read.csv("https://raw.githubusercontent.com/plotly/datasets/master/2011_us_ag_exports.csv")
+df$hover <- with(df, paste(state, '<br>', "Beef", beef, "Dairy", dairy, "<br>",
+                           "Fruits", total.fruits, "Veggies", total.veggies,
+                           "<br>", "Wheat", wheat, "Corn", corn))
+# give state boundaries a white border
+l <- list(color = toRGB("white"), width = 2)
+# specify some map projection/options
+g <- list(
+  scope = 'usa',
+  projection = list(type = 'albers usa'),
+  showlakes = TRUE,
+  lakecolor = toRGB('white')
+)
+
+map.out <- plot_geo(df, locationmode = 'USA-states') %>%
+  add_trace(
+    z = ~total.exports, text = ~hover, locations = ~code,
+    color = ~total.exports, colors = 'Purples'
+  ) %>%
+  colorbar(title = "Millions USD") %>%
+  layout(
+    title = '2011 US Agriculture Exports by State<br>(Hover for breakdown)',
+    geo = g
+  )
+
+
+
+```
+
+# `Plotly` demo
+
+`r map.out`
